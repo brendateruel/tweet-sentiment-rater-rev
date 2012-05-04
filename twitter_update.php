@@ -16,9 +16,9 @@ $home_timeline = $twitteroauth->get('statuses/home_timeline', array('count' => 2
 foreach($home_timeline->status as $status) {
 	$user = $status->user;
 	$date_time = date("Y-m-d H:i:s", strtotime($status->created_at)); 
-	$query = mysql_query("INSERT INTO friends (user_handle, user_image_URL) VALUES ('{$user->screen_name}', '{$user->profile_image_url}')");  
-	$query = mysql_query("INSERT INTO temp_timeline (user_handle, status_id, date_time, tweet) VALUES ('{$user->screen_name}', '{$status->id}', '{$date_time}', '{$status->text}')");  
-	mysql_free_result($query);
+	$query = $mysqli->query("INSERT INTO friends (user_handle, user_image_URL) VALUES ('{$user->screen_name}', '{$user->profile_image_url}')");  
+	$query = $mysqli->query("INSERT INTO temp_timeline (user_handle, status_id, date_time, tweet) VALUES ('{$user->screen_name}', '{$status->id}', '{$date_time}', '{$status->text}')");  
+	$mysqli->free();
 }
 
 print 'The most recent tweets from your timeline have been added to our database.';
@@ -31,9 +31,9 @@ print 'The most recent tweets from your timeline have been added to our database
 
 <p>
 <?= 
-	$query = mysql_query("SELECT user_handle FROM friends");  
+	$query = $mysqli->query("SELECT user_handle FROM friends");  
 	$a = array();
-	while ($result = mysql_fetch_assoc($query)) {
+	while ($result = $query->fetch_array(MYSQLI_BOTH)) {
 		$a[] = $result;
 	}
 	print_r($a);

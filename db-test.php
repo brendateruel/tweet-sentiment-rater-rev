@@ -8,10 +8,10 @@ if(!empty($_SESSION['username'])){
     $twitteroauth = new TwitterOAuth('JlVI5JLcRgiHOX8LhUhCmw', 'AzFZeQZ7zhhN397iLSPNC36MUryUBPufvqt8i1NI', $_SESSION['oauth_token'], $_SESSION['oauth_secret']);  
 }  
 
-$result = mysql_query("SELECT COUNT(*) AS `Rows`, `user_handle` FROM `temp_timeline` GROUP BY `user_handle` ORDER BY `user_handle`");
+$res = $mysqli->query("SELECT COUNT(*) AS `Rows`, `user_handle` FROM `temp_timeline` GROUP BY `user_handle` ORDER BY `user_handle`");
 
-if (!$result) {
-    $message  = 'Invalid query: ' . mysql_error() . "\n";
+if (!$res) {
+    $message  = 'Invalid query: ' . mysqli_error() . "\n";
     $message .= 'Whole query: ' . $query;
     die($message);
 }
@@ -20,23 +20,23 @@ if (!$result) {
 // Attempting to print $result won't allow access to information in the resource
 // One of the mysql result functions must be used
 // See also mysql_result(), mysql_fetch_array(), mysql_fetch_row(), etc.
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = mysqli_fetch_assoc($result)) {
     echo $row['user_handle'];
 	echo "\n";
 }
 
 	echo "\n";
 
-mysql_free_result();
+mysqli_free_result();
 
-$all = mysql_query("SELECT sentiment_score FROM temp_timeline WHERE user_handle='bergatron'");
+$all = $mysqli->query("SELECT sentiment_score FROM temp_timeline WHERE user_handle='bergatron'");
 $solution=array();
 
 function average($solution){
   return array_sum($solution)/count($solution) ;
 }
 
-while ($array = mysql_fetch_array($all)) {
+while ($array = mysqli_fetch_array($all)) {
 $solution[]=$array['sentiment_score'];
 }
 

@@ -25,17 +25,17 @@ if(isset($user_info->error)){
     header('Location: twitter_login.php'); 
 } else { 
     // Let's find the user by its ID  
-    $query = mysql_query("SELECT * FROM users WHERE oauth_provider = 'twitter' AND oauth_uid = ". $user_info->id);  
-    $result = mysql_fetch_array($query);  
+    $query = $mysqli->query("SELECT * FROM users WHERE oauth_provider = 'twitter' AND oauth_uid = ". $user_info->id);  
+    $result = $query->fetch_array(MYSQLI_BOTH);  
   
     // If not, let's add it to the database  
     if(empty($result)){  
-        $query = mysql_query("INSERT INTO users (oauth_provider, oauth_uid, username, oauth_token, oauth_secret) VALUES ('twitter', {$user_info->id}, '{$user_info->screen_name}', '{$access_token['oauth_token']}', '{$access_token['oauth_token_secret']}')");  
-        $query = mysql_query("SELECT * FROM users WHERE id = " . mysql_insert_id());  
-        $result = mysql_fetch_array($query);  
+        $query = $mysqli->query("INSERT INTO users (oauth_provider, oauth_uid, username, oauth_token, oauth_secret) VALUES ('twitter', {$user_info->id}, '{$user_info->screen_name}', '{$access_token['oauth_token']}', '{$access_token['oauth_token_secret']}')");  
+        $query = $mysqli->query("SELECT * FROM users WHERE id = " . mysql_insert_id());  
+        $result = $query->fetch_array(MYSQLI_BOTH);  
     } else {  
         // Update the tokens  
-        $query = mysql_query("UPDATE users SET oauth_token = '{$access_token['oauth_token']}', oauth_secret = '{$access_token['oauth_token_secret']}' WHERE oauth_provider = 'twitter' AND oauth_uid = {$user_info->id}");  
+        $query = $mysqli->query("UPDATE users SET oauth_token = '{$access_token['oauth_token']}', oauth_secret = '{$access_token['oauth_token_secret']}' WHERE oauth_provider = 'twitter' AND oauth_uid = {$user_info->id}");  
     }  
   
     $_SESSION['id'] = $result['id']; 
