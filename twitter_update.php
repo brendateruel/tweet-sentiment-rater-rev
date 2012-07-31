@@ -12,13 +12,12 @@ if(!empty($_SESSION['username'])){
 
 $home_timeline = $twitteroauth->get('statuses/home_timeline', array('count' => 200));  
 
-
 foreach($home_timeline->status as $status) {
 	$user = $status->user;
 	$date_time = date("Y-m-d H:i:s", strtotime($status->created_at)); 
 	$query = $mysqli->query("INSERT INTO friends (user_handle, user_image_URL) VALUES ('{$user->screen_name}', '{$user->profile_image_url}')");  
 	$query = $mysqli->query("INSERT INTO temp_timeline (user_handle, status_id, date_time, tweet) VALUES ('{$user->screen_name}', '{$status->id}', '{$date_time}', '{$status->text}')");  
-	$mysqli->free();
+	/* mysqli_free_result($mysqli); */
 }
 
 print 'The most recent tweets from your timeline have been added to our database.';
@@ -31,12 +30,14 @@ print 'The most recent tweets from your timeline have been added to our database
 
 <p>
 <?= 
-	$query = $mysqli->query("SELECT user_handle FROM friends");  
+	$query = "SELECT user_handle FROM friends";
 	$a = array();
-	while ($result = $query->fetch_array(MYSQLI_BOTH)) {
-		$a[] = $result;
+	$result = $mysqli->query($query);
+	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
+		$a[] = $row["user_handle"];
 	}
 	print_r($a);
+	$result->free();
 ?>
 </p>
 
