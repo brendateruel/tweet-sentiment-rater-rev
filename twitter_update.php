@@ -15,9 +15,9 @@ $home_timeline = $twitteroauth->get('statuses/home_timeline', array('count' => 2
 foreach($home_timeline->status as $status) {
 	$user = $status->user;
 	$date_time = date("Y-m-d H:i:s", strtotime($status->created_at)); 
-	$query = $mysqli->query("INSERT INTO friends (user_handle, user_image_URL) VALUES ('{$user->screen_name}', '{$user->profile_image_url}')");  
-	$query = $mysqli->query("INSERT INTO temp_timeline (user_handle, status_id, date_time, tweet) VALUES ('{$user->screen_name}', '{$status->id}', '{$date_time}', '{$status->text}')");  
-	/* mysqli_free_result($mysqli); */
+	if (!($query = $mysqli->multi_query("INSERT INTO friends (user_handle, user_image_URL) VALUES ('{$user->screen_name}', '{$user->profile_image_url}')"))) {
+	     echo "Insert failed: (" . $mysqli->errno . ") " . $mysqli->error;
+	}
 }
 
 print 'The most recent tweets from your timeline have been added to our database.';
@@ -39,8 +39,12 @@ print 'The most recent tweets from your timeline have been added to our database
 	print_r($a);
 	$result->free();*/
 	
-	$stmt = $mysqli->prepare("SELECT user_handle FROM friends");
-	$stmt->execute();
+	if (!($stmt = $mysqli->prepare("SELECT user_handle FROM friends"))) {
+	     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+	}
+	if (!$stmt->execute()) {
+	     echo "Execution failed: (" . $mysqli->errno . ") " . $mysqli->error;
+	}
 	$res = $stmt->get_result();
 	while($row = $res->fetch_assoc()) {
 		echo $row['user_handle'] . "\n";
