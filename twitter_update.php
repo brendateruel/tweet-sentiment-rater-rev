@@ -29,16 +29,24 @@ print 'The most recent tweets from your timeline have been added to our database
 <h2>Hello <?=(!empty($_SESSION['username']) ? '@' . $_SESSION['username'] : 'Guest'); ?></h2>
 
 <p>
-<?= 
-	$query = "SELECT user_handle FROM friends";
+<?php
+	/*$query = "SELECT user_handle FROM friends";
 	$a = array();
 	$result = $mysqli->query($query);
 	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
 		$a[] = $row["user_handle"];
 	}
 	print_r($a);
-	$result->free();
-?>
+	$result->free();*/
+	
+	$stmt = $mysqli->prepare("SELECT user_handle FROM friends");
+	$stmt->execute();
+	$res = $stmt->get_result();
+	while($row = $res->fetch_assoc()) {
+		echo $row['user_handle'] . "\n";
+	}
+	$stmt->close();
+	?>
 </p>
 
 <p>
