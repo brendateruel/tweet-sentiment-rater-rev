@@ -15,19 +15,13 @@ $home_timeline = $twitteroauth->get('statuses/home_timeline', array('count' => 2
 foreach($home_timeline->status as $status) {
 	$user = $status->user;
 	$date_time = date("Y-m-d H:i:s", strtotime($status->created_at)); 
-	if (!($query = $mysqli->prepare("INSERT INTO friends (user_handle, user_image_URL) VALUES ('{$user->screen_name}', '{$user->profile_image_url}')"))) {
-	     echo "Insert prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
-	}
-	if (!$query->execute()) {
-		echo "Friend already exists: (" . $mysqli->errno . ") " . $mysqli->error;
-	}
-	if (!($qry = $mysqli->prepare("INSERT INTO temp_timeline (user_handle, status_id, date_time, tweet) VALUES ('{$user->screen_name}', '{$status->id}', '{$date_time}', '{$status->text}')"))) {
-	     echo "Insert prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
-	}
-	if (!$qry->execute()) {
-		echo "Status update already exists: (" . $mysqli->errno . ") " . $mysqli->error;
+	$query = "INSERT INTO friends (user_handle, user_image_URL) VALUES ('{$user->screen_name}', '{$user->profile_image_url}');";
+	$query.= "INSERT INTO temp_timeline (user_handle, status_id, date_time, tweet) VALUES ('{$user->screen_name}', '{$status->id}', '{$date_time}', '{$status->text}');";
+	if (!$mysqli->multi_query($query)) {
+		echo "Multi-query failed: (" . $mysqli->errno . ") " . $mysqli->error;
 	}
 }
+$mysqli->close();
 
 print 'The most recent tweets from your timeline have been added to our database.';
 
