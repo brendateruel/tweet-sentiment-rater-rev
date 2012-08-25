@@ -8,6 +8,7 @@ echo "You've been authenticated. Now let's import your friends and home_timeline
 
 if(!empty($_SESSION['username'])){  
     $twitteroauth = new TwitterOAuth($tOauth_apiKey, $tOauth_apiSecret, $_SESSION['oauth_token'], $_SESSION['oauth_secret']);  
+	$session_username = $_SESSION['username'];
 }  
 
 $home_timeline = $twitteroauth->get('statuses/home_timeline', array('count' => 200));  
@@ -29,10 +30,10 @@ foreach($home_timeline->status as $status) {
 	$tweet = $status->text;
 	$tweet = $mysqli->real_escape_string($tweet);
 	$date_time = date("Y-m-d H:i:s", strtotime($status->created_at)); 
-	if (!($query = $mysqli->query("INSERT INTO friends (user_handle, user_image_URL) VALUES ('{$user->screen_name}', '{$user->profile_image_url}')"))) {
+	if (!($query = $mysqli->query("INSERT INTO friends (user_handle, user_image_URL, session_username) VALUES ('{$user->screen_name}', '{$user->profile_image_url}', '{$session_username}')"))) {
 		echo "Insert friends failed: (" . $mysqli->errno . ") " . $mysqli->error;
 	}
-	if (!($query = $mysqli->query("INSERT INTO temp_timeline (user_handle, status_id, date_time, tweet) VALUES ('{$user->screen_name}', '{$status->id}', '{$date_time}', '{$tweet}')"))) {
+	if (!($query = $mysqli->query("INSERT INTO temp_timeline (user_handle, status_id, date_time, tweet, session_username) VALUES ('{$user->screen_name}', '{$status->id}', '{$date_time}', '{$tweet}', '{$session_username}')"))) {
 		echo "Insert temp_timeline failed: (" . $mysqli->errno . ") " . $mysqli->error;
 	}
 	/* mysqli_free_result($mysqli); -- is this needed?*/
