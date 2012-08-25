@@ -45,11 +45,17 @@ foreach($home_timeline->status as $status) {
 	$tweet = $mysqli->real_escape_string($tweet);
 	$date_time = date("Y-m-d H:i:s", strtotime($status->created_at)); 
 	if (!($query = $mysqli->query("INSERT INTO {$new_friends_table} (user_handle, user_image_URL) VALUES ('{$user->screen_name}', '{$user->profile_image_url}')"))) {
-		echo "Insert friends failed: (" . $mysqli->errno . ") " . $mysqli->error;
-	}
+		echo "{$user->screen_name} already exists.";
+		}
+		else {
+			echo "{$user->screen_name} has been added to your list of friends";
+		}
 	if (!($query = $mysqli->query("INSERT INTO {$new_temp_timeline} (user_handle, status_id, date_time, tweet) VALUES ('{$user->screen_name}', '{$status->id}', '{$date_time}', '{$tweet}')"))) {
-		echo "Insert temp_timeline failed: (" . $mysqli->errno . ") " . $mysqli->error;
-	}
+		echo "{$user->screen_name} is up-to-date.";
+		}
+		else {
+			echo "{$user->screen_name} has a new status update";
+		}
 	/* mysqli_free_result($mysqli); -- is this needed?*/
 }
 
