@@ -8,10 +8,11 @@ include "module/AlchemyAPIParams.php";
 $alchemyObj = new AlchemyAPI();
 $alchemyObj->loadAPIKey("../alchemy_api_key.txt");
 
-$a = "kindle%20is%20amazing";
+$a = "kindle is amazing";
 
 $result = $alchemyObj->TextGetTextSentiment($a);
-echo "$result<br /><br />\n";
+echo $a;
+echo $result;
 
 
   
