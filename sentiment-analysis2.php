@@ -9,10 +9,15 @@ $alchemyObj = new AlchemyAPI();
 $alchemyObj->loadAPIKey("../alchemy_api_key.txt");
 
 $a = "kindle is amazing";
-
-$result = $alchemyObj->TextGetTextSentiment($a);
+/*
+$result = xmlrpc_encode($alchemyObj->TextGetTextSentiment($a, "xml"));
+*/
+$result = $alchemyObj->TextGetTextSentiment($a, "xml");
 echo $a;
-echo $result;
+$test = simpleXML_load_string($result);
+$test2 = $test->docSentiment;
+print_r($test2);
+
 
 
   
