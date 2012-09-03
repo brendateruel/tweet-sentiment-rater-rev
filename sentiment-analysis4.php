@@ -17,15 +17,20 @@ echo $url;
   /**
    * GET wrapper for Viralheat.
    */
-  function get($url, $parameters = array()) {
-    $response = $this->Viralheat($url, 'GET', $parameters);
+class ViralHeat{
+   function get($url, $parameters = array()) {
+    $response = $this->OAuthRequest($url, 'GET', $parameters);
     if ($this->format === 'xml' && $this->decode_xml) {
       return simplexml_load_string($response);
     }
     return $response;
   }
+}
 
-print_r($response);
+$viralheat = new ViralHeat();
+$result = $viralheat->get($url);
+
+print_r($result);
 
 $new_friends_table = "friends_" . $session_username;
 $new_temp_timeline = "temp_timeline_" . $session_username; 
