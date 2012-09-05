@@ -39,15 +39,14 @@ while($row = $res->fetch_assoc()) {
 			$a = $row2['tweet'];
 			$b = $row2['status_ID'];
 			$b = $mysqli->real_escape_string($b);
-			$response = $alchemyObj->TextGetTextSentiment($a, "xml");
+			$response = $alchemyObj->TextGetTextSentiment($a);
 			$result = simpleXML_load_string($response);
 			$sentiment = $result->docSentiment;
 			$mood = $sentiment->type;
 			$score = $sentiment->score;
-			echo $mood . "\n";
 			echo $score . "\n";
 			$score = $mysqli->real_escape_string($score);
-			if(!($stmt3 = $mysqli->query("INSERT INTO {$new_temp_timeline} (sentiment_score) VALUES ('{$score}') WHERE status_ID='{$b}'"))) {
+			if(!($stmt3 = $mysqli->query("UPDATE {$new_temp_timeline} (sentiment_score) VALUES ('{$score}') WHERE status_ID='{$b}'"))) {
 					 echo "Statement failed: (" . $mysqli->errno . ") " . $mysqli->error;
 				}
 		}
