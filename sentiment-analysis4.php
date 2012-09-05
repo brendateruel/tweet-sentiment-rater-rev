@@ -9,17 +9,28 @@ if(!empty($_SESSION['username'])){
 	$session_username = $_SESSION['username'];
 }  
 
+$text = "is this working yet?";
+
+$url = "http://www.viralheat.com/api/sentiment/review.xml?text=" . urlEncode($text) . "&api_key=" . $vh_apiKEY;
+echo $url;
+
   /**
-   * GET wrapper for oAuthRequest.
+   * GET wrapper for Viralheat.
    */
-  function get($url, $parameters = array()) {
-    $response = $this->oAuthRequest($url, 'GET', $parameters);
+class ViralHeat{
+   function get($url, $parameters = array()) {
+    $response = $this->OAuthRequest($url, 'GET', $parameters);
     if ($this->format === 'xml' && $this->decode_xml) {
       return simplexml_load_string($response);
     }
     return $response;
   }
- 
+}
+
+$viralheat = new ViralHeat();
+$result = $viralheat->get($url);
+
+print_r($result);
 
 $new_friends_table = "friends_" . $session_username;
 $new_temp_timeline = "temp_timeline_" . $session_username; 
@@ -32,36 +43,8 @@ if (!$stmt->execute()) {
 	     echo "Execution failed: (" . $mysqli->errno . ") " . $mysqli->error;
 	}
 	
-/*
-$text = array();
-$status_id = array();
-$tweet = array();
 
-*/
 
-$tweet = $stmt->get_result();
-while ($result = $tweet->fetch_row()) {
-	while ($result2 = $result->fetch_assoc()) {
-		echo $result2;
-	}
-	$text[] = $result['0'];
-	print_r($result);
-	print_r($text);
-	echo count($text);
-/*	echo is_array($result) ? 'Array' : 'Not an Array';
-	echo count($result);
-	echo count($text);
-*/
-/*	$status_id[] = $result['status_ID'];
-	$text2 = current($text);
-	$status_id2 = current($status_id);
-	$query = $mysqli->query("INSERT INTO test_import (field1, field2) VALUES ('{$text2}', '{$status_id2}')");
-	mysql_free_result($query);
-*/
-$url = "http://www.viralheat.com/api/sentiment/review.xml?text=" . urlEncode($text) . "&api_key=" . $vh_apiKEY;
-echo $url;
-
-}
 
 /*
 print_r($text);
