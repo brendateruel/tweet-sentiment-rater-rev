@@ -4,10 +4,13 @@ require("../secret.php");
 require("twitteroauth/twitteroauth-xml.php");
 session_start();
 
+/* Authenticating session */
 if(!empty($_SESSION['username'])){  
-    $twitteroauth = new TwitterOAuth('JlVI5JLcRgiHOX8LhUhCmw', 'AzFZeQZ7zhhN397iLSPNC36MUryUBPufvqt8i1NI', $_SESSION['oauth_token'], $_SESSION['oauth_secret']);  
-}  
+    $twitteroauth = new TwitterOAuth($tOauth_apiKey, $tOauth_apiSecret, $_SESSION['oauth_token'], $_SESSION['oauth_secret']);  
+	$session_username = $_SESSION['username'];
+} 
 
+/*
 $res = $mysqli->query("SELECT COUNT(*) AS `Rows`, `user_handle` FROM `temp_timeline` GROUP BY `user_handle` ORDER BY `user_handle`");
 
 if (!$res) {
@@ -29,29 +32,62 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 mysqli_free_result();
 
-$all = $mysqli->query("SELECT sentiment_score FROM temp_timeline WHERE user_handle='bergatron'");
-$solution=array();
+*/
+
+/* Updating user's friends and timeline tables */
+$new_friends_table = "friends_" . $session_username;
+$new_temp_timeline = "temp_timeline_" . $session_username; 
+
+/* Selecting user's friends */
 
 function average($solution){
-  return array_sum($solution)/count($solution) ;
+	return array_sum($solution)/count($solution) ;
 }
-
-while ($array = mysqli_fetch_array($all)) {
-$solution[]=$array['sentiment_score'];
-}
-
-print_r($solution);
-echo array_sum($solution);
-echo "sum(a) = " . array_sum($solution) . "\n";
-echo "Average of array:".average($solution);
-
-
 	
-if (mysql_num_rows($all) > 0) {
-	echo "we're good";
-} else {
-	echo 'no values to fetch';
+if (!($stmt = $mysqli->prepare("SELECT user_handle FROM {$new_friends_table}"))) {
+	 echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
 }
+if (!$stmt->execute()) {
+	 echo "Execution failed: (" . $mysqli->errno . ") " . $mysqli->error;
+}
+$res = $stmt->get_result();
+while($row = $res->fetch_assoc()) {
+	$user = $row['user_handle'];	
+	$all = $mysqli->query("SELECT sentiment_score FROM {$new_temp_timeline} WHERE user_handle='{$user}'");
+	$row_cnt = $all->num_rows;
+	$solution = array();
+	while ($array = $all->fetch_array(MYSQLI_BOTH)) {
+		$solution[]=$array['sentiment_score'];
+		}
+	echo $user;
+	if ($row_cnt > 0) {
+		$array_sum = array_sum($solution);
+		echo $array_sum;
+		if ($array_sum == 0) {
+			echo "Average of array: 0";
+		} else {
+			echo "sum(a) = " . $array_sum . "\n";
+			$avg_sentiment_rating = average($solution);
+			echo "Average of array:". $avg_sentiment_rating;
+			if(!($stmt = $mysqli->query("UPDATE {$new_friends_table} set avg_sentiment_rating='{$avg_sentiment_rating}' WHERE user_handle='{$user}'"))) {
+					 echo "Statement failed: (" . $mysqli->errno . ") " . $mysqli->error;
+				}
+		}
+	} else {
+		echo 'no values to fetch';
+		/* Unsure if these should be 0 or NULL...
+		if(!($stmt2 = $mysqli->query("UPDATE {$new_friends_table} set avg_sentiment_rating='0' WHERE user_handle='{$user}'"))) {
+					 echo "Statement failed: (" . $mysqli->errno . ") " . $mysqli->error;
+				} */
+	}
+}
+
+/* Need to redirect to results page once completed
+if(!empty($_SESSION['username'])){  
+	// User is logged in, redirect  
+	header('Location: twitter_update.php');
+}		
+*/
 
 
 ?>

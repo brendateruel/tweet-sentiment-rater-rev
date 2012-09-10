@@ -9,7 +9,9 @@ echo "You've been authenticated. Now let's import your friends and home_timeline
 if(!empty($_SESSION['username'])){  
     $twitteroauth = new TwitterOAuth($tOauth_apiKey, $tOauth_apiSecret, $_SESSION['oauth_token'], $_SESSION['oauth_secret']);  
 	$session_username = $_SESSION['username'];
-}  
+}  else {
+	header('Location: welcome.html'); 
+}
 
 $home_timeline = $twitteroauth->get('statuses/home_timeline', array('count' => 200));  
 
@@ -57,36 +59,18 @@ foreach($home_timeline->status as $status) {
 
 print 'The most recent tweets from your timeline have been added to our database.';
 
+if(!empty($_SESSION['username'])){  
+	// User is logged in, redirect  
+	header('Location: home.html');
+}
+
 ?>
 
 <html>
 
-<h2>Hello <?= $session_username ?></h2>
 
 <p>
-<?php
-	/*$query = "SELECT user_handle FROM friends";
-	$a = array();
-	$result = $mysqli->query($query);
-	while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
-		$a[] = $row["user_handle"];
-	}
-	print_r($a);
-	$result->free();*/
-	
 
-	if (!($stmt = $mysqli->prepare("SELECT user_handle FROM {$new_friends_table}"))) {
-	     echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
-	}
-	if (!$stmt->execute()) {
-	     echo "Execution failed: (" . $mysqli->errno . ") " . $mysqli->error;
-	}
-	$res = $stmt->get_result();
-	while($row = $res->fetch_assoc()) {
-		echo $row['user_handle'] . "\n";
-	}
-	$stmt->close();
-	?>
 </p>
 
 <p>
