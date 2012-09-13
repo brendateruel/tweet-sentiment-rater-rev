@@ -1,6 +1,9 @@
 ﻿<!DOCTYPE>
 <html>
 <head>
+
+<link rel="stylesheet" type"text/css" href="style.css" media="screen" />
+
 <title>Home - Tweet Sentiment Rater</title>
 
 </head>

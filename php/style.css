@@ -15,7 +15,7 @@ background-color: #c3c3c3;
 }
 
 #content {
-background-color: #c3c3c3;
+background-color: #444444;
 }
 
 #sidebar {
@@ -24,4 +24,28 @@ background-color: #c3c3c3;
 
 #footer {
 background-color: #c3c3c3;
+}
+
+#default_friends {
+margin:10px;
+color:#d6d6d6;
+background-color: light-gray;
+}
+
+#negative {
+margin:10px;
+color:#d6d6d6;
+background-color: blue;
+}
+
+#positive {
+margin:10px;
+color:#d6d6d6;
+background-color: green;
+}
+
+#neutral {
+margin:10px;
+color:#d6d6d6;
+background-color: yellow;
 }

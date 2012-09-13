@@ -3,6 +3,13 @@
 	require("../twitteroauth/twitteroauth-xml.php");
 	session_start();
 	include('variables/variables.php'); 
+		
+	/*Alchemy API SDK 
+	include('../module/AlchemyAPI_CURL.php');
+	include('../module/AlchemyAPIParams.php');
+	$alchemyObj = new AlchemyAPI();
+	$alchemyObj->loadAPIKey("../alchemy_api_key.txt");
+*/
 ?>
 
 	<div id="header">

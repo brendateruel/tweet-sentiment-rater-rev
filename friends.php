@@ -5,6 +5,8 @@ if(!empty($_SESSION['username'])){
 	} else {
 			header('Location: ../welcome.html'); 
 		}
+		
+echo "<div id='button'><a href=sentiment-ratings.php>Analyze now</a></div>";
 
 	/*$query = "SELECT user_handle FROM friends";
 	$a = array();
@@ -22,11 +24,11 @@ if (!$stmt->execute()) {
 	 echo "Execution failed: (" . $mysqli->errno . ") " . $mysqli->error;
 }
 $res = $stmt->get_result();
-?>
-<?php
+
 while($row = $res->fetch_assoc()) {
-	echo "<div id='user' style='margin:10px; color:#d6d6d6'>";
-	echo $row['user_handle'] . "\n";
+	$user = $row['user_handle'];
+		echo "<div id='default_friends'>";
+	echo $user . "\n";
 	echo "</div>";
 }
 ?>

@@ -1,14 +1,5 @@
 ﻿<?php
 
-require("../secret.php");
-require("twitteroauth/twitteroauth-xml.php");
-session_start();
-
-/* Authenticating session */
-if(!empty($_SESSION['username'])){  
-    $twitteroauth = new TwitterOAuth($tOauth_apiKey, $tOauth_apiSecret, $_SESSION['oauth_token'], $_SESSION['oauth_secret']);  
-	$session_username = $_SESSION['username'];
-} 
 
 /*
 $res = $mysqli->query("SELECT COUNT(*) AS `Rows`, `user_handle` FROM `temp_timeline` GROUP BY `user_handle` ORDER BY `user_handle`");
@@ -95,6 +86,34 @@ if(!empty($_SESSION['username'])){
 <html>
 
 <h2>Hello <?=(!empty($_SESSION['username']) ? '@' . $_SESSION['username'] : 'Guest'); ?></h2>
-<p></p>
+<p>
 
+<?php
+if (!($stmt = $mysqli->prepare("SELECT user_handle, avg_sentiment_rating FROM {$new_friends_table}"))) {
+	 echo "Prepare failed: (" . $mysqli->errno . ") " . $mysqli->error;
+}
+if (!$stmt->execute()) {
+	 echo "Execution failed: (" . $mysqli->errno . ") " . $mysqli->error;
+}
+$res = $stmt->get_result();
+
+while($row = $res->fetch_assoc()) {
+	$user = $row['user_handle'];
+	$avg_sentiment_rating = $row['avg_sentiment_rating'];
+	if($avg_sentiment_rating > 0) {
+		$mood_bg = "positive";
+		} elseif($avg_sentiment_rating < 0) {
+			$mood_bg = "negative";
+			} else {
+				$mood_bg = "neutral";
+				}
+		echo "<div id='{$mood_bg}'>";
+	echo $user . "\n";
+	echo $avg_sentiment_rating . "\n";
+	echo "</div>";
+}
+
+?>
+
+</p>
 </html>
