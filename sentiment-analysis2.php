@@ -59,6 +59,10 @@ while($row = $res->fetch_assoc()) {
 	
 }
 
+
+
+
+/*
 $a = "kindle is amazing" . "\n";
 $response = $alchemyObj->TextGetTextSentiment($a, "xml");
 echo $a;
@@ -70,7 +74,7 @@ echo $mood . "\n";
 echo $score . "\n";
 
 $stmt->close();
-
+*/
 
   
 ?>
